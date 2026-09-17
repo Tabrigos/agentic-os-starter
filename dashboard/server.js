@@ -67,11 +67,18 @@ function avviaAzione(id) {
   // a meta' dal sync orario. Fuori restano 'sync' (inciamperebbe nel proprio
   // lucchetto) e 'test' (non scrive niente); 'evolvi' se lo mette da solo in
   // evolvi.sh, cosi' vale anche quando parte da scheduler o a mano.
+  // Un file per titolare in .sync-locks/ (dal 2026-09-17): questa run cancella
+  // SOLO il proprio. Prima era un unlinkSync sul file unico, che il 2026-09-16
+  // ha tolto il lucchetto a una sessione interattiva in corso.
   const conLock = Boolean(a.prompt);
-  const LOCK = path.join(ROOT, '.sync-lock');
+  const LOCKDIR = path.join(ROOT, '.sync-locks');
+  const LOCK = path.join(LOCKDIR, 'dashboard-' + id);
   const sblocca = () => { if (conLock) { try { fs.unlinkSync(LOCK); } catch (e) {} } };
   if (conLock) {
-    try { fs.writeFileSync(LOCK, new Date().toISOString() + ' dashboard: ' + id); } catch (e) {}
+    try {
+      fs.mkdirSync(LOCKDIR, { recursive: true });
+      fs.writeFileSync(LOCK, new Date().toISOString() + ' dashboard: ' + id);
+    } catch (e) {}
   }
   const proc = spawn(cmd, args, { cwd: ROOT, stdio: ['ignore', out, out] });
   run = { id, etichetta: a.etichetta, avviata: new Date(), log, proc, finita: false };

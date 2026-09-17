@@ -17,18 +17,24 @@ Dashboard il lunedì. Chiudi indicando `vault/99-Sistema/Guida all'uso.md` per i
   e dashboard one-click (container `dashboard`, Claude Code headless dentro,
   UI su http://localhost:3210)
 - Avvio: `podman compose up -d` — Stop: `podman compose down`
-- **Sync-lock**: il file `.sync-lock` alla radice significa "qualcuno sta
-  scrivendo, non committare adesso". Lo mette **chi scrive** — hook
+- **Sync-lock**: un file dentro `.sync-locks/` significa "qualcuno sta
+  scrivendo, non committare adesso". **Uno per titolare** (dal 2026-09-17):
+  ognuno cancella solo il proprio, e il repo resta bloccato finché ne esiste
+  almeno uno vivo. Lo mette **chi scrive** — hook
   `SessionStart`/`SessionEnd` per le sessioni interattive, `dashboard/evolvi.sh`
   e `dashboard/server.js` per le headless — e lo leggono i due sync
   (`automation/sync.ps1`, `dashboard/sync-repo.sh`), che saltano il giro. Il
   sync non lo crea **mai**: il pulsante "Sync repo" inciamperebbe nel proprio
   lucchetto. Il lock **scade dopo 4 ore** perché i docs di Claude Code non
   garantiscono `SessionEnd`: un lock orfano è un caso normale e non deve
-  bloccare il backup per sempre. Secondo guardiano, indipendente dagli hook: se
-  un file è stato toccato negli ultimi 5 minuti il sync salta comunque —
-  stateless, e basta una pausa di 5 minuti perché riparta da solo. Il perché,
-  con la data in cui è successo davvero, sta in `automation/sync-lock.ps1`
+  bloccare il backup per sempre, e chi passa raccoglie gli scaduti. Secondo
+  guardiano, indipendente dagli hook: se un file è stato toccato negli ultimi 5
+  minuti il sync salta comunque — stateless, e basta una pausa di 5 minuti
+  perché riparta da solo. **Il suo limite, misurato il 2026-09-17**: vede le
+  *scritture*, non le sessioni aperte, e una sessione che in quel momento sta
+  leggendo gli è invisibile — per questo il lucchetto per-titolare serviva
+  davvero. Il perché, con le date in cui è successo, sta in
+  `automation/sync-lock.ps1`
 - Principio di portabilità: la logica dell'automazione va nei container (uguale su
   Windows/Linux); sull'host restano solo colla per-OS (launcher, scheduler) e credenziali
 - Script PowerShell: salvarli UTF-8 **con BOM** (PS 5.1 senza BOM li legge ANSI) e

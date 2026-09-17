@@ -4,16 +4,26 @@
 # del sync (automation/sync.ps1 è la colla Windows in via di assottigliamento).
 cd /workspace || exit 1
 
-# --- Sync-lock: non committare a meta' sessione (vedi automation/sync-lock.ps1)
-LOCK=/workspace/.sync-lock
-if [ -f "$LOCK" ]; then
-    eta=$(( $(date +%s) - $(stat -c %Y "$LOCK") ))
+# --- Sync-lock: non committare a meta' sessione. Un file per titolare in
+# .sync-locks/ (protocollo in automation/sync-lock.ps1): bloccato finche' ne
+# esiste almeno uno piu' giovane di 4 ore, e chi passa raccoglie gli scaduti.
+# Il vecchio file singolo vale ancora in lettura, per il passaggio alla nuova
+# forma: una sessione aperta da prima non deve restare senza protezione.
+VIVI=0
+for f in /workspace/.sync-locks/* /workspace/.sync-lock; do
+    [ -f "$f" ] || continue
+    eta=$(( $(date +%s) - $(stat -c %Y "$f") ))
     if [ "$eta" -lt 14400 ]; then
-        echo "[sync] sessione in corso (.sync-lock di $((eta / 60)) min fa): salto il giro"
-        exit 0
+        echo "[sync] titolare del lucchetto: $(basename "$f") (da $((eta / 60)) min)"
+        VIVI=$((VIVI + 1))
+    else
+        echo "[sync] lucchetto scaduto ($((eta / 3600))h) di $(basename "$f"): lo raccolgo"
+        rm -f "$f"
     fi
-    echo "[sync] .sync-lock scaduto ($((eta / 3600))h): lo ignoro e procedo"
-    rm -f "$LOCK"
+done
+if [ "$VIVI" -gt 0 ]; then
+    echo "[sync] $VIVI titolare/i in corso: salto il giro"
+    exit 0
 fi
 
 # Rete di sicurezza che non dipende dagli hook: qualcosa toccato negli ultimi

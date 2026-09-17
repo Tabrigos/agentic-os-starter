@@ -4,4 +4,5 @@ automation/logs/
 media-work/
 .claude/settings.local.json
 .sync-lock
+.sync-locks/
 .pacchetto-generato

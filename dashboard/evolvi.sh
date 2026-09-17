@@ -9,7 +9,10 @@ cd /workspace || exit 1
 # orario non deve committarla a meta'. Il lock lo mette qui e non in server.js
 # cosi' vale per tutte e tre le vie d'invocazione (pulsante, scheduler, exec a
 # mano); il trap lo toglie comunque vada, anche se la run muore.
-LOCK=/workspace/.sync-lock
+# Un file suo (dal 2026-09-17): cosi' a fine run non porta via il lucchetto
+# di una sessione interattiva che sta ancora lavorando.
+LOCK=/workspace/.sync-locks/evolvi-$$
+mkdir -p /workspace/.sync-locks
 printf '%s evolvi.sh nel container\n' "$(date '+%Y-%m-%dT%H:%M:%S')" > "$LOCK"
 trap 'rm -f "$LOCK"' EXIT INT TERM
 

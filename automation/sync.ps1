@@ -13,15 +13,28 @@ Set-Location $Proj
 # perche' i docs di Claude Code non garantiscono SessionEnd, e un lock orfano
 # non deve bloccare il backup per sempre. Il perche' completo, con la data in
 # cui e' successo davvero, sta in automation/sync-lock.ps1.
-$lock = Join-Path $Proj '.sync-lock'
-if (Test-Path $lock) {
-    $eta = (Get-Date) - (Get-Item $lock).LastWriteTime
-    if ($eta.TotalHours -lt 4) {
-        Write-Host ("[sync] sessione in corso (.sync-lock di {0} min fa): salto il giro" -f [int]$eta.TotalMinutes)
-        exit 0
+# Un file per titolare in .sync-locks\ (sessione interattiva, run della
+# dashboard, /evolvi): il repo e' bloccato se ne esiste almeno uno vivo, e
+# ognuno cancella solo il proprio. Il sync legge e raccoglie gli scaduti,
+# non crea mai un lucchetto.
+$dirLock = Join-Path $Proj '.sync-locks'
+$vecchioLock = Join-Path $Proj '.sync-lock'
+$candidati = @(Get-ChildItem -LiteralPath $dirLock -File -ErrorAction SilentlyContinue)
+if (Test-Path -LiteralPath $vecchioLock) { $candidati += @(Get-Item -LiteralPath $vecchioLock) }
+$vivi = @()
+foreach ($f in $candidati) {
+    $eta = (Get-Date) - $f.LastWriteTime
+    if ($eta.TotalHours -lt 4) { $vivi += $f }
+    else {
+        Write-Host ("[sync] lucchetto scaduto ({0}h) di '{1}': lo raccolgo" -f [int]$eta.TotalHours, $f.Name)
+        Remove-Item -LiteralPath $f.FullName -Force -ErrorAction SilentlyContinue
     }
-    Write-Host ("[sync] .sync-lock scaduto ({0}h): lo ignoro e procedo" -f [int]$eta.TotalHours)
-    Remove-Item $lock -Force -ErrorAction SilentlyContinue
+}
+if ($vivi.Count -gt 0) {
+    $piuRecente = $vivi | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+    $eta = [int]((Get-Date) - $piuRecente.LastWriteTime).TotalMinutes
+    Write-Host ("[sync] {0} titolare/i del lucchetto (il piu' recente di {1} min fa): salto il giro" -f $vivi.Count, $eta)
+    exit 0
 }
 
 # Rete di sicurezza che NON dipende dagli hook: se un file tracciato e' stato
