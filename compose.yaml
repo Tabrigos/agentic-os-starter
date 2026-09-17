@@ -1,0 +1,56 @@
+services:
+  obsidian:
+    image: lscr.io/linuxserver/obsidian:latest
+    container_name: obsidian
+    security_opt:
+      - seccomp=unconfined # richiesto da Electron/Chromium nel container
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Rome
+    volumes:
+      - obsidian-config:/config
+      - ./vault:/vault
+    ports:
+      - "3000:3000" # UI web (http)
+      - "3001:3001" # UI web (https)
+    shm_size: "1gb"
+    restart: unless-stopped
+
+  # Dashboard one-click (Roadmap Fase 3): pulsanti per le skill su http://localhost:3210.
+  # Claude Code gira NEL container (universale Windows/Linux); dell'host monta solo
+  # il file credenziali come token store condiviso. Trust del workspace: entrypoint.
+  dashboard:
+    build: ./dashboard
+    container_name: agentic-dashboard
+    working_dir: /workspace
+    environment:
+      - TZ=Europe/Rome # per i semafori "brief di oggi" / "review della settimana"
+    volumes:
+      - .:/workspace
+      - claude-data:/root/.claude
+      - ${USERPROFILE:-${HOME}}/.claude/.credentials.json:/root/.claude/.credentials.json
+      # Cartella host opzionale: se contiene "git-token" (PAT fine-grained,
+      # solo questo repo, Contents R/W), il pulsante sync fa anche pull/push
+      - ${USERPROFILE:-${HOME}}/.agentic-os:/root/.agentic-os:ro
+    ports:
+      - "127.0.0.1:3210:3210" # solo localhost: nessuna esposizione di rete
+    restart: unless-stopped
+
+  # Estrazione fonti on-demand: NON parte con "up -d" (profilo "tools").
+  # Video:     podman compose run --rm media-tools "<url YouTube>" [--force-whisper]
+  # Documenti: podman compose run --rm media-tools "/vault/00-Inbox/<file>"
+  media-tools:
+    build: ./media-tools
+    profiles: ["tools"]
+    environment:
+      - WHISPER_MODEL=small
+    volumes:
+      - ./media-work:/work
+      - ./vault:/vault:ro # sola lettura: i documenti da estrarre si leggono, mai toccarli da qui
+      - whisper-models:/root/.cache/huggingface
+
+volumes:
+  obsidian-config:
+  whisper-models:
+  claude-data:

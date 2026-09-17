@@ -1,0 +1,58 @@
+{
+  "permissions": {
+    "defaultMode": "default",
+    "deny": [
+      "Bash(bash *)",
+      "Bash(sh *)",
+      "Bash(zsh *)",
+      "Bash(python)",
+      "Bash(python3)",
+      "Bash(perl)",
+      "Bash(ruby)",
+      "Bash(node)",
+      "Bash(dig *)",
+      "Bash(nslookup *)",
+      "PowerShell(iex *)",
+      "PowerShell(Invoke-Expression *)"
+    ],
+    "allow": [
+      "WebSearch",
+      "WebFetch",
+      "Read",
+      "Glob",
+      "Grep",
+      "Edit",
+      "Write",
+      "Bash(podman compose run --rm media-tools:*)",
+      "Bash(git status:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git log:*)",
+      "Bash(git diff:*)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear|compact|fork",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File \"$CLAUDE_PROJECT_DIR/automation/sync-lock.ps1\" -Azione crea"
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "matcher": "logout|prompt_input_exit|other",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File \"$CLAUDE_PROJECT_DIR/automation/sync-lock.ps1\" -Azione rimuovi"
+          }
+        ]
+      }
+    ]
+  }
+}

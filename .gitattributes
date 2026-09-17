@@ -1,0 +1,8 @@
+# Fine-riga deterministici su host Windows e container Linux (repo sempre LF).
+# Senza questo, host (autocrlf=true) e container (nessun autocrlf) vedevano
+# gli stessi file CRLF in modo opposto: badge sync fantasma e commit ping-pong.
+* text=auto
+
+# Script per-OS: restano CRLF anche su checkout Linux
+*.ps1 text eol=crlf
+*.cmd text eol=crlf

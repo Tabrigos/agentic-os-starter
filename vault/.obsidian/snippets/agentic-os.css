@@ -1,0 +1,32 @@
+/* Snippet agentic-os — ritocchi sopra il tema Minimal (Fase 2 Roadmap).
+   Regole volutamente leggere: se una classe cambia nome in una release
+   di Obsidian, la regola smette di applicarsi senza rompere nulla. */
+
+/* Callout "Ultimo brief" (tip): ambra calda invece del ciano di default */
+.callout[data-callout="tip"] {
+  --callout-color: 178, 140, 62;
+}
+
+/* Callout "Nota originale" (quote ripiegato): discreto, testo in corsivo */
+.callout[data-callout="quote"] {
+  --callout-color: 128, 128, 128;
+}
+.callout[data-callout="quote"] .callout-content {
+  font-style: italic;
+  opacity: 0.85;
+}
+
+/* Viste Bases nella Dashboard: righe più ariose, hover leggero */
+.bases-table-container .bases-td,
+.bases-table-container .bases-th {
+  padding-block: 6px;
+}
+.bases-table-container .bases-tr:hover {
+  background: var(--background-modifier-hover);
+}
+
+/* Titoli delle sezioni della Dashboard: un filo più di respiro */
+.markdown-preview-view h2,
+.markdown-reading-view h2 {
+  margin-top: 1.6em;
+}

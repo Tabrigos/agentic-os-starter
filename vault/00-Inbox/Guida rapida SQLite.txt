@@ -1,0 +1,10 @@
+Guida rapida SQLite — appunti di lavoro
+
+SQLite è un database embedded senza server: tutto vive in un singolo file .db.
+PRAGMA journal_mode=WAL migliora la concorrenza in lettura durante le scritture.
+Le transazioni esplicite (BEGIN/COMMIT) rendono gli insert di massa ordini di grandezza più veloci.
+VACUUM compatta il file dopo grandi cancellazioni.
+I tipi sono dinamici (type affinity): dichiarare INTEGER non impedisce di inserire testo.
+Backup a caldo: comando .backup dalla CLI oppure l'API sqlite3_backup.
+Indici parziali (CREATE INDEX ... WHERE) utili per tabelle usate come code di lavoro.
+EXPLAIN QUERY PLAN prima di ottimizzare a caso.
