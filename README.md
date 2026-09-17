@@ -3,10 +3,10 @@
 Un vault [Obsidian](https://obsidian.md) organizzato col metodo PARA, gestito da
 [Claude Code](https://claude.com/claude-code), che ogni settimana cerca il modo
 di diventare più capace. Note in markdown, nessun database, nessun lock-in: se
-domani togli l'agente, ti restano dei file di testo.
+domani togli l'agente, ti resta una cartella di file di testo.
 
 Non è un prodotto: è un sistema personale, documentato fin nelle motivazioni,
-pensato per essere clonato e reso proprio.
+fatto per essere clonato e reso proprio.
 
 ```
 ┌─ 5. EVAL SUITE ────────── tests/: misura le skill, baseline vs regressioni ─┐
@@ -22,47 +22,95 @@ pensato per essere clonato e reso proprio.
    Infrastruttura: Obsidian e dashboard in container Podman, repo git
 ```
 
-## Cosa c'è dentro
+## Installarlo: chiedilo all'assistente
 
-| Componente | Cosa fa |
-|---|---|
-| `vault/` | La memoria: cartelle PARA, costituzione del sistema, template |
-| `.claude/skills/` | Sette skill: brief, smistamento inbox, nuovo progetto, weekly review, distillazione di fonti, restyling frontend, e il ciclo di evoluzione |
-| `.claude/agents/` | Subagenti su modello economico: distillatore, ricercatore, scettico |
-| `dashboard/` | Container con Claude Code headless: cruscotto a pulsanti su `:3210`, generatore dell'indice, sync git |
-| `automation/` | Colla per-OS: bootstrap, sync orario, lucchetto anti-conflitto |
-| `tests/` | Eval suite: misura le skill su un vault sintetico e dà un punteggio |
-| `media-tools/` | Container per trascrizioni e estrazioni, usato da `/distilla` |
-| `compose.yaml` | Obsidian su `:3000`, dashboard su `:3210` |
+Il progetto si installa da sé. Non serve leggere questo file fino in fondo prima
+di cominciare.
+
+1. **Installa Claude Code** e fai il login una volta sola, lanciando `claude` e
+   seguendo il browser. Su Windows: `irm https://claude.ai/install.ps1 | iex`
+2. **Scarica il progetto**, con `git clone` o come archivio zip
+3. **Apri un terminale dentro la cartella** e scrivi `claude`
+4. **Scrivi `/installa`**
+
+Da lì in poi ci pensa l'assistente: ti racconta cos'è, controlla cosa hai già
+sulla macchina, ti dice cosa manca e con quale comando si ottiene, e installa
+**solo dopo che gli hai detto di sì**. Se preferisci prima capire, chiedigli
+"cos'è questo progetto?" e rispondi dopo.
+
+Va bene anche non usare il comando: se apri `claude` qui dentro e chiedi "come
+si installa?", finisce nello stesso posto.
+
+## ⚠️ Le tue note e il fork pubblico
+
+Se hai preso il progetto con un **fork**, quel fork è pubblico come l'originale,
+e al primo `git push` le tue note finirebbero online.
+
+Il vault deve stare in un **repo privato tuo**. Creane uno vuoto, puntaci
+`origin`, e il sync orario fa il resto. Se non ti interessa il backup su un
+remoto, togli semplicemente `origin` e resta tutto in locale: il sistema
+funziona lo stesso, con la storia git sul tuo disco.
+
+## Cosa ti serve
+
+| Cosa | Perché | Obbligatorio |
+|---|---|---|
+| Claude Code | è l'agente che fa il lavoro | sì |
+| git | storia, rollback, backup | sì |
+| Podman | Obsidian e dashboard girano in container | sì |
+| node | marca la cartella come fidata in automatico | no |
+| GitHub CLI (`gh`) | solo se cloni via `gh` | no |
+
+**Sul runtime, per essere chiari**: il sistema è costruito su Podman, e le
+automazioni sull'host lo invocano per nome. Con solo Docker i container
+partirebbero, ma sync orario, pulsanti della dashboard e test deterministici no.
+Podman si installa in un comando e convive con Docker senza problemi.
+
+Su Windows: `winget install Git.Git RedHat.Podman`, poi `podman machine init` e
+`podman machine start`. Su Debian o Ubuntu: `sudo apt install git podman
+podman-compose`.
 
 ## Le tre finestre
 
 | Finestra | A cosa serve | Dove |
 |---|---|---|
-| **Obsidian** | Per te: leggere, scrivere, navigare | http://localhost:3000 |
-| **Claude Code** | Per l'agente: le skill, con dialogo | `claude` nella cartella |
-| **Dashboard** | Cruscotto a pulsanti, semafori di salute | http://localhost:3210 |
+| **Obsidian** | per te: leggere, scrivere, navigare | http://localhost:3000 |
+| **Claude Code** | per l'agente: le skill, con dialogo | `claude` nella cartella |
+| **Dashboard** | cruscotto a pulsanti, semafori di salute | http://localhost:3210 |
 
-## Installazione
+Il vault arriva con qualche nota d'esempio, giusto per vedere le skill al
+lavoro. Cancellale quando hai capito come funziona.
 
-Prerequisiti, una volta sola.
+Obsidian è configurato ma **senza tema**: se vuoi lo stesso aspetto, installa
+*Minimal* di kepano dai temi della community. Lo snippet del sistema è già lì.
 
-Windows (PowerShell):
+## I due riti
 
-```powershell
-winget install Git.Git GitHub.cli
-irm https://claude.ai/install.ps1 | iex
-winget install RedHat.Podman
-podman machine init; podman machine start
-```
+Il sistema resta vivo con due abitudini, non di più.
 
-Linux: installa `git`, `podman` (con `podman-compose` o `docker-compose`) e
-Claude Code col package manager della distro.
+- **`/brief` al mattino**: scadenze, progetti, inbox. Due minuti, e sai dove
+  mettere l'energia oggi
+- **La sezione 🧬 della Dashboard il lunedì**: approvi o bocci le proposte che
+  `/evolvi` ha lasciato lì. Senza questo, il sistema smette di crescere
 
-Poi fai il login una volta a `gh auth login -w -p https` e una volta a `claude`,
-che crea il token store montato dai container.
+`/evolvi` arriva **in pausa**: si lancia a mano, dal pulsante della dashboard o
+dallo script. La schedulazione si attiva quando ti fidi del ciclo.
 
-Installazione vera e propria:
+## Cosa c'è dentro
+
+| Componente | Cosa fa |
+|---|---|
+| `vault/` | la memoria: cartelle PARA, costituzione del sistema, template |
+| `.claude/skills/` | brief, smistamento inbox, nuovo progetto, revisione settimanale, distillazione di fonti, restyling frontend, ciclo di evoluzione |
+| `.claude/agents/` | subagenti su modello economico: distillatore, ricercatore, scettico |
+| `dashboard/` | container con Claude Code headless: cruscotto, generatore dell'indice, sync git |
+| `automation/` | colla per-OS: bootstrap, sync orario, lucchetto anti-conflitto |
+| `tests/` | eval suite: misura le skill su un vault sintetico e dà un punteggio |
+| `media-tools/` | container per trascrizioni ed estrazioni, usato da `/distilla` |
+
+## Installarlo a mano
+
+Se preferisci fare da te, invece dei passi qui sopra:
 
 ```powershell
 git clone https://github.com/Tabrigos/agentic-os-starter "$env:USERPROFILE\lavoro\agentic-os"
@@ -70,37 +118,20 @@ cd "$env:USERPROFILE\lavoro\agentic-os"
 powershell -ExecutionPolicy Bypass -File automation\setup-pc.ps1
 ```
 
-Su Linux: `git clone https://github.com/Tabrigos/agentic-os-starter ~/lavoro/agentic-os` e poi
-`sh automation/setup-linux.sh`.
+Su Linux: clona dove preferisci, poi `sh automation/setup-linux.sh`.
 
-Lo script marca la cartella come trusted per Claude Code, avvia i container e
-registra il sync orario. **Tieni il nome della cartella `agentic-os`**: la
-documentazione e il ponte coi repo di progetto usano quel percorso come
-convenzione (`%USERPROFILE%\lavoro\agentic-os`, su Linux `~/lavoro/agentic-os`).
+Lo script capisce da solo che la cartella giusta è il clone in cui si trova.
+Marca la cartella come fidata per Claude Code, avvia i container e registra il
+sync orario. Verifica finale: `claude` nella cartella, poi `/brief`.
 
-Verifica finale: `claude` nella cartella, poi `/brief`.
+**Tieni il nome della cartella `agentic-os`**: la documentazione e il ponte coi
+repo di progetto usano `%USERPROFILE%\lavoro\agentic-os` come convenzione (su
+Linux `~/lavoro/agentic-os`).
 
-Il vault arriva con la configurazione di Obsidian già pronta ma **senza tema**:
-se vuoi lo stesso aspetto, installa *Minimal* di kepano dai temi della community
-(Impostazioni → Aspetto → Temi). Lo snippet CSS del sistema è già incluso e attivo.
+## Prima di fidarti: come sono fatti i permessi
 
-## I primi passi
-
-Il vault arriva con qualche nota d'esempio, giusto per vedere le skill al lavoro.
-
-1. `/brief` — il rito del mattino: scadenze, progetti, inbox
-2. `/processa-inbox` — guarda dove finiscono le note d'esempio e perché
-3. Cancella gli esempi e mettici la tua roba
-4. `tests\run-evals.ps1` — fissa la tua baseline, così saprai se un'evoluzione peggiora le skill
-
-Poi ci sono **due riti** che tengono vivo il sistema. `/brief` al mattino, e il
-lunedì la sezione 🧬 della Dashboard, dove approvi o bocci le proposte di
-`/evolvi`. Senza il secondo, il sistema smette di crescere.
-
-## Prima di fidarti: leggi come sono fatti i permessi
-
-Questo sistema esegue un agente in headless, cioè senza nessuno che approvi.
-Le difese sono tre e stanno in `.claude/settings.json`:
+Questo sistema esegue un agente in headless, cioè senza nessuno che approvi. Le
+difese stanno in `.claude/settings.json` e sono tre:
 
 - una **allow-list stretta**: ogni voce nomina il comando e i suoi argomenti, mai `Bash(*)`
 - un **`defaultMode`** dichiarato, perché la forza di una allow-list dipende dalla modalità
@@ -119,15 +150,12 @@ sintetico, mai per il vault vero. Non "sistemarlo" per coerenza: rompe la suite.
 ## Renderlo tuo
 
 - **La costituzione** è `vault/CLAUDE.md`: struttura, convenzioni, regole operative
-- **Il perché** è `vault/99-Sistema/Architettura e filosofia.md`: principi e decisioni scartate
+- **Il perché** è `vault/99-Sistema/Architettura e filosofia.md`: principi e alternative scartate
 - **Come si usa** è `vault/99-Sistema/Guida all'uso.md`
 - **Le regole del repo** sono in `CLAUDE.md` alla radice
 
-Il sistema è in **italiano** e l'agente risponde in italiano: è una scelta scritta
-nella costituzione, si cambia lì.
-
-Per il backup e il multi-PC serve un tuo repo git privato: crealo, punta `origin`
-lì e il sync orario fa il resto. Il vault non deve stare in un repo pubblico.
+Il sistema è in **italiano** e l'agente risponde in italiano: è una scelta
+scritta nella costituzione, si cambia lì.
 
 ## Licenza
 

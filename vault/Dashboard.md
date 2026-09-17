@@ -84,6 +84,7 @@ manuale andata bene.
 
 | Comando | Cosa fa |
 |---|---|
+| `/installa` | Primo avvio: presenta il sistema, controlla i requisiti, installa su conferma. Si usa una volta sola, poi si può cancellare |
 | `/brief` | Brief del giorno: task in scadenza, progetti, novità |
 | `/processa-inbox` | Smista le note di `00-Inbox/` nelle cartelle PARA |
 | `/nuovo-progetto <nome>` | Crea un progetto con template e lo aggiunge qui |

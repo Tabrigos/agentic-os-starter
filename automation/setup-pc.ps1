@@ -4,7 +4,15 @@
 #       .\setup-pc.ps1 -Primario           → registra anche le attività pianificate
 #                                             (SOLO su un PC per volta: il primario)
 param(
-    [string]$Dest = "$env:USERPROFILE\lavoro\agentic-os",
+    # Se lo script gira da dentro un clone (c'e' compose.yaml accanto), quel
+    # clone E' la destinazione. Senza questo, chi ha gia' clonato altrove si
+    # ritrova un secondo clone in lavoro\agentic-os senza accorgersene - il
+    # caso normale di chi installa per la prima volta seguendo il README.
+    [string]$Dest = $(
+        $qui = Split-Path -Parent $PSScriptRoot
+        if ($qui -and (Test-Path (Join-Path $qui 'compose.yaml'))) { $qui }
+        else { "$env:USERPROFILE\lavoro\agentic-os" }
+    ),
     [string]$Repo = "Tabrigos/agentic-os-starter",
     [switch]$Primario
 )

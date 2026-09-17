@@ -13,7 +13,11 @@
 
 set -e
 REPO="https://github.com/Tabrigos/agentic-os-starter.git"
-DEST="$HOME/lavoro/agentic-os"
+# Se lo script gira da dentro un clone (c'e' compose.yaml accanto), quel clone
+# E' la destinazione: chi ha gia' scaricato il repo non si ritrova un secondo
+# clone in ~/lavoro/agentic-os senza accorgersene.
+QUI=$(cd "$(dirname "$0")/.." 2>/dev/null && pwd)
+if [ -n "$QUI" ] && [ -f "$QUI/compose.yaml" ]; then DEST="$QUI"; else DEST="$HOME/lavoro/agentic-os"; fi
 
 if [ ! -d "$DEST" ]; then
     mkdir -p "$(dirname "$DEST")"

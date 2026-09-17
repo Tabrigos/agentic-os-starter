@@ -104,3 +104,27 @@ Dashboard il lunedì. Chiudi indicando `vault/99-Sistema/Guida all'uso.md` per i
   Senza, il progetto risulta fermo mentre non lo è — è successo per 36 giorni
   fino al 2026-09-04, ed era una pendenza aperta dalla review del 07-27 e
   riproposta identica per tre review di fila
+
+## Primo avvio (questa sezione si toglie dopo l'installazione)
+
+Se questa è una copia appena scaricata e il sistema **non è ancora installato**
+— i container `obsidian` e `agentic-dashboard` non esistono, il vault ha ancora
+le note d'esempio, il Registro attività è vuoto — allora la sessione che si apre
+qui è quasi sempre la prima di qualcuno che non conosce il progetto.
+
+In quel caso, **qualunque cosa chieda** (cos'è questo? come si installa? da dove
+comincio? me lo fai partire?), invoca la skill `/installa`. Quella skill
+presenta il sistema, controlla i requisiti, installa **solo dopo conferma
+esplicita** e poi spiega come si usa. Non improvvisare un'installazione a mano:
+esiste per non dimenticare pezzi e per non toccare la macchina di qualcuno senza
+il suo permesso.
+
+Due cose da dire presto, senza aspettare che le chieda:
+
+- il vault va in un **repo privato suo**. Se ha preso il progetto con un fork
+  pubblico, le sue note finirebbero online al primo push
+- `/evolvi` arriva **in pausa**: si lancia a mano. La schedulazione si attiva
+  quando si fida del ciclo, non prima
+
+A installazione fatta, `.claude/skills/installa/` e questa sezione si possono
+cancellare: da lì in poi vale il resto di questo file.
