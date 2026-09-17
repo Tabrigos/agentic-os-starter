@@ -48,8 +48,8 @@ function Reset-Testbed {
     # automation/sync-lock.ps1: senza, ogni caso stampa un errore di hook.
     # Innocuo per i punteggi (SessionEnd scatta a lavoro finito) ma e' rumore in
     # ogni log, ed e' rimasto invisibile fino al 2026-09-16 perche' la run del
-    # 09-04 e' delle 10:28 e gli hook sono nati nel pomeriggio. Il .sync-lock che
-    # ne nasce vive nel testbed, che viene cancellato a ogni caso.
+    # 09-04 e' delle 10:28 e gli hook sono nati nel pomeriggio. I lucchetti che ne
+    # nascono vivono in .sync-locks\ dentro il testbed, cancellato a ogni caso.
     Copy-Item "$root\automation" "$testbed\automation" -Recurse
     Copy-Item "$root\CLAUDE.md" "$testbed\CLAUDE.md"
     Copy-Item "$root\tests\fixtures\vault-base" "$testbed\vault" -Recurse
