@@ -3,7 +3,7 @@ tipo: progetto
 stato: attivo
 prossimo: prima run di /brief, poi svuotare l'inbox d'esempio con /processa-inbox
 tag: [sistema]
-creata: 2026-09-17
+creata: 2026-09-18
 descrizione: Il progetto che tiene vivo il sistema stesso - infrastruttura, skill, permessi, test
 ---
 
@@ -38,4 +38,4 @@ non lo è, e la weekly review lo segnala come abbandonato.
 
 ## Log
 
-- 2026-09-17 — sistema installato dal pacchetto
+- 2026-09-18 — sistema installato dal pacchetto

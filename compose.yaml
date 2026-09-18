@@ -12,8 +12,12 @@ services:
       - obsidian-config:/config
       - ./vault:/vault
     ports:
-      - "3000:3000" # UI web (http)
-      - "3001:3001" # UI web (https)
+      # Legate a localhost: l'interfaccia di Obsidian non ha password e su Linux
+      # una porta senza indirizzo finisce su tutte le interfacce. Per aprirla da
+      # un altro dispositivo: prima CUSTOM_USER e PASSWORD fra le environment,
+      # poi togli "127.0.0.1:" da queste due righe. In quest'ordine.
+      - "127.0.0.1:3000:3000" # UI web (http)
+      - "127.0.0.1:3001:3001" # UI web (https)
     shm_size: "1gb"
     restart: unless-stopped
 

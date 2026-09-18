@@ -70,6 +70,35 @@ Su Windows: `winget install Git.Git RedHat.Podman`, poi `podman machine init` e
 `podman machine start`. Su Debian o Ubuntu: `sudo apt install git podman
 podman-compose`.
 
+## Quanto costa farlo girare
+
+Il lavoro lo fa Claude Code, quindi il sistema consuma il tuo utilizzo di
+Claude. Meglio saperlo prima di installarlo che dopo.
+
+- le skill di tutti i giorni (`/brief`, `/processa-inbox`, `/weekly-review`)
+  sono corte e girano sul modello economico
+- **`/evolvi` è l'unica cosa cara**: gira sul modello top, legge il web e ragiona
+  su cosa cambiare nel sistema. Arriva in pausa apposta, e si lancia a mano
+- la eval suite apre sei sessioni headless di fila: lanciala quando cambi
+  qualcosa, non per abitudine
+
+Ogni percorso automatico dichiara il proprio modello, quindi un `/model` scelto
+in sessione non cambia di nascosto il costo delle run schedulate.
+
+## Cosa è esposto in rete
+
+Le due interfacce web sono legate a **localhost**: si aprono dal browser del
+computer su cui gira il sistema, non dagli altri computer della rete. È una
+scelta, non una dimenticanza. L'interfaccia di Obsidian non ha password, e su
+Linux una porta pubblicata senza indirizzo finisce su **tutte** le interfacce:
+il vault sarebbe leggibile da chiunque stia sulla stessa wifi.
+
+Se vuoi aprirlo di proposito, per leggere le note dal tablet o da un altro PC,
+servono due cose **in quest'ordine**: prima una password sull'interfaccia di
+Obsidian, con le variabili `CUSTOM_USER` e `PASSWORD` fra le `environment` del
+servizio (immagine linuxserver), e solo dopo togli `127.0.0.1:` dalle righe
+delle porte in `compose.yaml`.
+
 ## Le tre finestre
 
 | Finestra | A cosa serve | Dove |
